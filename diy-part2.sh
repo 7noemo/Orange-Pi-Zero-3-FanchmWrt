@@ -31,21 +31,24 @@ else
 fi
 
 # --- 2. 自检 ---
+# 只查「必须由种子 config 显式选中」的包。
+# fwxd / kmod-fwx / luci-app-fwx-* 这些是上游 include/target.mk 的
+# DEFAULT_PACKAGES.router 带进来的，defconfig 之后才会出现在 .config 里，
+# 在 defconfig 之前查它们必然是空的 —— 那些放到 workflow 的
+# "Verify key packages in .config" 步骤里查。
 fail=0
 check_on() {
 	if grep -q "^CONFIG_$1=y" .config; then
 		echo "OK:   $1"
 	else
-		echo "FAIL: $1 不在 .config 里（包名不对或依赖缺失）"
+		echo "FAIL: $1 不在种子 config 里（包名不对或依赖缺失）"
 		fail=1
 	fi
 }
 for k in \
 	TARGET_sunxi_cortexa53_DEVICE_xunlong_orangepi-zero3 \
 	PACKAGE_kmod-uwe5622 PACKAGE_uwe5622-firmware \
-	PACKAGE_fwxd PACKAGE_kmod-fwx PACKAGE_luci-theme-fanchmwrt \
-	PACKAGE_luci-app-fwx-dashboard PACKAGE_luci-app-fwx-appfilter \
-	PACKAGE_luci-app-fwx-wireless PACKAGE_luci-app-fwx-app-center \
+	PACKAGE_luci-app-fwx-app-center \
 	PACKAGE_luci-app-passwall2 PACKAGE_luci-compat \
 	LUCI_LANG_zh_Hans \
 	PACKAGE_luci-app-ttyd PACKAGE_luci-app-samba4 PACKAGE_luci-app-dockerman
