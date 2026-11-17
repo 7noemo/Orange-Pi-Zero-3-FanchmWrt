@@ -1,0 +1,11 @@
+#!/bin/sh
+#
+# 首次启动的默认值：中文界面 + 主机名
+# FanchmWrt 自身只设了 fwx.global.theme_mode（见 package/fcm/fwxd/files/uci-defaults/100_fwx）
+#
+uci -q set luci.main.lang='zh_cn'
+uci -q set system.@system[0].hostname='FanchmWrt-Zero3'
+uci -q commit luci
+uci -q commit system
+
+exit 0
