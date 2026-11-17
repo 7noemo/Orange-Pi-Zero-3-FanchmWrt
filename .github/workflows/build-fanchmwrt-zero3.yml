@@ -99,13 +99,10 @@ jobs:
         cd openwrt
         "$GITHUB_WORKSPACE/$DIY_P2_SH"
 
-    - name: Download package
-      id: package
+    - name: make defconfig
       run: |
         cd openwrt
         make defconfig
-        make download -j$(nproc) || make download -j8 V=s
-        find dl -size -1024c -delete
 
     - name: Verify key packages in .config
       run: |
@@ -132,6 +129,13 @@ jobs:
         grep -q "^CONFIG_TARGET_sunxi_cortexa53_DEVICE_xunlong_orangepi-zero3=y" .config \
           && echo "OK: target = Orange Pi Zero 3" || { echo "FAIL: wrong target device"; fail=1; }
         [ "$fail" -eq 0 ] || exit 1
+
+    - name: Download package
+      id: package
+      run: |
+        cd openwrt
+        make download -j$(nproc) || make download -j8 V=s
+        find dl -size -1024c -delete
 
     - name: Compile the firmware
       id: compile
